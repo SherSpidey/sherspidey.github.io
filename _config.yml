@@ -89,8 +89,8 @@ bing_site_verification: # out your bing-site-verification ID (Bing Webmaster)
 # Blog
 # -----------------------------------------------------------------------------
 
-blog_name: al-folio # blog_name will be displayed in your blog page
-blog_description: a simple whitespace theme for academics
+blog_name: Time # blog_name will be displayed in your blog page
+blog_description: get busy living, or get busy dying
 permalink: /blog/:year/:title/
 lsi: false # produce an index for related posts
 
@@ -125,12 +125,12 @@ disqus_shortname: al-folio # put your disqus shortname
 # If you have blog posts published on medium.com or other external sources,
 # you can display them in your blog by adding a link to the RSS feed.
 external_sources:
-  - name: medium.com
-    rss_url: https://medium.com/@al-folio/feed
-  - name: Google Blog
-    posts:
-      - url: https://blog.google/technology/ai/google-gemini-update-flash-ai-assistant-io-2024/
-        published_date: 2024-05-14
+#  - name: medium.com
+#    rss_url: https://medium.com/@al-folio/feed
+#  - name: 老E直播间
+#    posts:
+#      - url: https://live.bilibili.com/5050?live_from=81011&spm_id_from=333.1365.top_right_bar_window_history.content.click
+#        published_date: 2025-01-04
 
 # -----------------------------------------------------------------------------
 # Newsletter
@@ -227,7 +227,6 @@ plugins:
   - jekyll-twitter-plugin
   - jemoji
   - terser
-  - active_support
 
 # Sitemap settings
 defaults:
