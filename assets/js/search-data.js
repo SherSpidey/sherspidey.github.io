@@ -79,7 +79,18 @@ ninja.data = [{
               handler: () => {
                 window.location.href = "/blog/";
               },
-            },{id: "post-ubuntu常用初始化配置",
+            },{id: "post-那些巧妙的设计模式",
+      
+        title: "那些巧妙的设计模式",
+      
+      description: "个人学习过程中，发现的那些巧妙的设计模式",
+      section: "Posts",
+      handler: () => {
+        
+          window.location.href = "/blog/2025/%E9%82%A3%E4%BA%9B%E5%B7%A7%E5%A6%99%E7%9A%84%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/";
+        
+      },
+    },{id: "post-ubuntu常用初始化配置",
       
         title: "Ubuntu常用初始化配置",
       

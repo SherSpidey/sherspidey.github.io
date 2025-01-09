@@ -1,4 +1,45 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="cn"><generator uri="https://jekyllrb.com/" version="4.3.4">Jekyll</generator><link href="https://sherspidey.github.io/feed.xml" rel="self" type="application/atom+xml"/><link href="https://sherspidey.github.io/" rel="alternate" type="text/html" hreflang="cn"/><updated>2025-01-06T16:37:32+08:00</updated><id>https://sherspidey.github.io/feed.xml</id><title type="html">Paradox’s blog</title><subtitle>A simple, whitespace theme for academics. Based on [*folio](https://github.com/bogoli/-folio) design. </subtitle><entry><title type="html">Ubuntu常用初始化配置</title><link href="https://sherspidey.github.io/blog/2025/Ubuntu%E5%B8%B8%E7%94%A8%E5%88%9D%E5%A7%8B%E5%8C%96%E9%85%8D%E7%BD%AE/" rel="alternate" type="text/html" title="Ubuntu常用初始化配置"/><published>2025-01-02T14:00:00+08:00</published><updated>2025-01-02T14:00:00+08:00</updated><id>https://sherspidey.github.io/blog/2025/Ubuntu%E5%B8%B8%E7%94%A8%E5%88%9D%E5%A7%8B%E5%8C%96%E9%85%8D%E7%BD%AE</id><content type="html" xml:base="https://sherspidey.github.io/blog/2025/Ubuntu%E5%B8%B8%E7%94%A8%E5%88%9D%E5%A7%8B%E5%8C%96%E9%85%8D%E7%BD%AE/"><![CDATA[<h2 id="替换国内源">替换国内源</h2> <p>Ubuntu24的源规则已经变动，以下换源规则仅供Ubuntu22参考</p> <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo sed</span> <span class="nt">-i</span> <span class="s2">"s@http://.*archive.ubuntu.com@http://repo.huaweicloud.com@g"</span> /etc/apt/sources.list
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="cn"><generator uri="https://jekyllrb.com/" version="4.3.4">Jekyll</generator><link href="https://sherspidey.github.io/feed.xml" rel="self" type="application/atom+xml"/><link href="https://sherspidey.github.io/" rel="alternate" type="text/html" hreflang="cn"/><updated>2025-01-09T15:22:05+08:00</updated><id>https://sherspidey.github.io/feed.xml</id><title type="html">Paradox’s blog</title><subtitle>A simple, whitespace theme for academics. Based on [*folio](https://github.com/bogoli/-folio) design. </subtitle><entry><title type="html">那些巧妙的设计模式</title><link href="https://sherspidey.github.io/blog/2025/%E9%82%A3%E4%BA%9B%E5%B7%A7%E5%A6%99%E7%9A%84%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="alternate" type="text/html" title="那些巧妙的设计模式"/><published>2025-01-09T15:00:00+08:00</published><updated>2025-01-09T15:00:00+08:00</updated><id>https://sherspidey.github.io/blog/2025/%E9%82%A3%E4%BA%9B%E5%B7%A7%E5%A6%99%E7%9A%84%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F</id><content type="html" xml:base="https://sherspidey.github.io/blog/2025/%E9%82%A3%E4%BA%9B%E5%B7%A7%E5%A6%99%E7%9A%84%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/"><![CDATA[<h2 id="crtp">CRTP</h2> <p>CRTP，全称“Curiously Recurring Template Pattern”（怪异递归模板模式）， 是一种在C++编程中使用模板的设计模式。这种模式看起来有点不寻常，但非常强大和实用。 它的核心思想是：一个类将自己作为模板参数传递给基类。</p> <p>第一次看到这个模式的时候，确实感觉很怪异，毕竟直觉上直接继承可以做到功能，为什么要反其道而行之， 使用模板，破坏代码的可读性呢？但深入了解后才发现他的好处。</p> <p>首先我们来看一下正常继承关系的一个简单示例：</p> <div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// Base.h</span>
+<span class="k">class</span> <span class="nc">Base</span> <span class="p">{</span>
+<span class="nl">public:</span>
+    <span class="k">virtual</span> <span class="kt">void</span> <span class="n">foo</span><span class="p">()</span> <span class="p">{</span>
+        <span class="c1">// 基类实现</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="c1">// Derived.h</span>
+<span class="k">class</span> <span class="nc">Derived</span> <span class="o">:</span> <span class="k">public</span> <span class="n">Base</span> <span class="p">{</span>
+<span class="nl">public:</span>
+    <span class="kt">void</span> <span class="n">foo</span><span class="p">()</span> <span class="k">override</span> <span class="p">{</span>
+        <span class="c1">// 子类实现</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+</code></pre></div></div> <p>可以看到，正常情况下，编译器会为每一个带有虚函数的类生成对应的虚函数表，以满足运行时的多态性。</p> <p>然后我们来看一下CRTP是如何做到的：</p> <div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">Derived</span><span class="p">&gt;</span>
+<span class="k">class</span> <span class="nc">Base</span> <span class="p">{</span>
+<span class="nl">public:</span>
+    <span class="kt">void</span> <span class="n">interface</span><span class="p">()</span> <span class="p">{</span>
+        <span class="c1">// 调用派生类实现的方法</span>
+        <span class="k">static_cast</span><span class="o">&lt;</span><span class="n">Derived</span><span class="o">*&gt;</span><span class="p">(</span><span class="k">this</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">implementation</span><span class="p">();</span>
+    <span class="p">}</span>
+
+    <span class="c1">// 派生类必须实现这个方法</span>
+    <span class="kt">void</span> <span class="nf">implementation</span><span class="p">()</span> <span class="p">{</span>
+        <span class="c1">// 默认实现（如果需要的话）</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="k">class</span> <span class="nc">Derived</span> <span class="o">:</span> <span class="k">public</span> <span class="n">Base</span><span class="o">&lt;</span><span class="n">Derived</span><span class="o">&gt;</span> <span class="p">{</span>
+<span class="nl">public:</span>
+    <span class="kt">void</span> <span class="n">implementation</span><span class="p">()</span> <span class="p">{</span>
+        <span class="c1">// Derived类自己的实现</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"Derived implementation"</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">Derived</span> <span class="n">d</span><span class="p">;</span>
+    <span class="n">d</span><span class="p">.</span><span class="n">interface</span><span class="p">();</span> <span class="c1">// 输出: Derived implementation</span>
+<span class="p">}</span>
+</code></pre></div></div> <p>这时，CRTP的优点就体验出来，使用模板之后，其提供了一种无需运行时开销的多态性， 因为类型在编译时就已经确定，所以也并不会使用虚函数表，可以减少内存和时间的开销。 除此之外，由于CRTP实现了编译时多态性，编译器可以在编译时进行更多的优化， 如内联展开（inline expansion），这可以显著提高运行时性能。</p> <p>当然，缺点是引入了模板，编译时间增加，代码复杂度增加，调试困难，不是真正的多态等等。</p>]]></content><author><name></name></author><category term="个人"/><category term="Design Pattern"/><category term="Template"/><summary type="html"><![CDATA[个人学习过程中，发现的那些巧妙的设计模式]]></summary></entry><entry><title type="html">Ubuntu常用初始化配置</title><link href="https://sherspidey.github.io/blog/2025/Ubuntu%E5%B8%B8%E7%94%A8%E5%88%9D%E5%A7%8B%E5%8C%96%E9%85%8D%E7%BD%AE/" rel="alternate" type="text/html" title="Ubuntu常用初始化配置"/><published>2025-01-02T14:00:00+08:00</published><updated>2025-01-02T14:00:00+08:00</updated><id>https://sherspidey.github.io/blog/2025/Ubuntu%E5%B8%B8%E7%94%A8%E5%88%9D%E5%A7%8B%E5%8C%96%E9%85%8D%E7%BD%AE</id><content type="html" xml:base="https://sherspidey.github.io/blog/2025/Ubuntu%E5%B8%B8%E7%94%A8%E5%88%9D%E5%A7%8B%E5%8C%96%E9%85%8D%E7%BD%AE/"><![CDATA[<h2 id="替换国内源">替换国内源</h2> <p>Ubuntu24的源规则已经变动，以下换源规则仅供Ubuntu22参考</p> <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo sed</span> <span class="nt">-i</span> <span class="s2">"s@http://.*archive.ubuntu.com@http://repo.huaweicloud.com@g"</span> /etc/apt/sources.list
 <span class="nb">sudo sed</span> <span class="nt">-i</span> <span class="s2">"s@http://.*security.ubuntu.com@http://repo.huaweicloud.com@g"</span> /etc/apt/sources.list
 </code></pre></div></div> <h2 id="美化终端">美化终端</h2> <p>Ubuntu终端默认使用的命令行解释器(Shell)为bash，虽然稳定、简洁，但日常使用体验对于新手来说并不是很好，故使用zsh。<br/> zsh是一个功能更为先进的shell，可以极大地提升开发者的效率和用户体验，适合那些需要更强大自动补全、命令修正和自定义体验的用户。</p> <h3 id="安装oh-my-zsh">安装Oh-My-Zsh</h3> <p><a href="https://ohmyz.sh/"><strong>Oh-My-Zsh</strong></a>是一款非常好用的Zsh管理框架，并提供多种终端美化主题。</p> <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>apt update
 <span class="nb">sudo </span>apt <span class="nb">install </span>zsh <span class="nt">-y</span>
@@ -67,16 +108,16 @@ Content 2
 <span class="cp">{%</span><span class="w"> </span><span class="nt">endtab</span><span class="w"> </span><span class="cp">%}</span>
 
 <span class="cp">{%</span><span class="w"> </span><span class="nt">endtabs</span><span class="w"> </span><span class="cp">%}</span>
-</code></pre></div></div> <p>With this you can generate visualizations like:</p> <ul id="log" class="tab" data-tab="d12d33f9-a0c9-4b60-92b3-7be6018e29fd" data-name="log"> <li class="active" id="log-php"> <a href="#">php </a> </li> <li id="log-js"> <a href="#">js </a> </li> <li id="log-ruby"> <a href="#">ruby </a> </li> </ul> <ul class="tab-content" id="d12d33f9-a0c9-4b60-92b3-7be6018e29fd" data-name="log"> <li class="active"> <div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">var_dump</span><span class="p">(</span><span class="s1">'hello'</span><span class="p">);</span>
+</code></pre></div></div> <p>With this you can generate visualizations like:</p> <ul id="log" class="tab" data-tab="0844f625-34c1-4459-9000-837a24429490" data-name="log"> <li class="active" id="log-php"> <a href="#">php </a> </li> <li id="log-js"> <a href="#">js </a> </li> <li id="log-ruby"> <a href="#">ruby </a> </li> </ul> <ul class="tab-content" id="0844f625-34c1-4459-9000-837a24429490" data-name="log"> <li class="active"> <div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">var_dump</span><span class="p">(</span><span class="s1">'hello'</span><span class="p">);</span>
 </code></pre></div></div> </li> <li> <div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">console</span><span class="p">.</span><span class="nf">log</span><span class="p">(</span><span class="dl">"</span><span class="s2">hello</span><span class="dl">"</span><span class="p">);</span>
 </code></pre></div></div> </li> <li> <div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">pputs</span> <span class="dl">'</span><span class="s1">hello</span><span class="dl">'</span>
-</code></pre></div></div> </li> </ul> <h2 id="another-example">Another example</h2> <ul id="data-struct" class="tab" data-tab="1b2dfaec-5384-47ba-b782-ca9cea240d88" data-name="data-struct"> <li class="active" id="data-struct-yaml"> <a href="#">yaml </a> </li> <li id="data-struct-json"> <a href="#">json </a> </li> </ul> <ul class="tab-content" id="1b2dfaec-5384-47ba-b782-ca9cea240d88" data-name="data-struct"> <li class="active"> <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">hello</span><span class="pi">:</span>
+</code></pre></div></div> </li> </ul> <h2 id="another-example">Another example</h2> <ul id="data-struct" class="tab" data-tab="d933f37e-cdd3-4883-afde-c4c66036a124" data-name="data-struct"> <li class="active" id="data-struct-yaml"> <a href="#">yaml </a> </li> <li id="data-struct-json"> <a href="#">json </a> </li> </ul> <ul class="tab-content" id="d933f37e-cdd3-4883-afde-c4c66036a124" data-name="data-struct"> <li class="active"> <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">hello</span><span class="pi">:</span>
   <span class="pi">-</span> <span class="s2">"</span><span class="s">whatsup"</span>
   <span class="pi">-</span> <span class="s2">"</span><span class="s">hi"</span>
 </code></pre></div></div> </li> <li> <div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
   </span><span class="nl">"hello"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"whatsup"</span><span class="p">,</span><span class="w"> </span><span class="s2">"hi"</span><span class="p">]</span><span class="w">
 </span><span class="p">}</span><span class="w">
-</span></code></pre></div></div> </li> </ul> <h2 id="tabs-for-something-else">Tabs for something else</h2> <ul id="something-else" class="tab" data-tab="ea209459-714d-4039-bc90-2f58faa7a558" data-name="something-else"> <li class="active" id="something-else-text"> <a href="#">text </a> </li> <li id="something-else-quote"> <a href="#">quote </a> </li> <li id="something-else-list"> <a href="#">list </a> </li> </ul> <ul class="tab-content" id="ea209459-714d-4039-bc90-2f58faa7a558" data-name="something-else"> <li class="active"> <p>Regular text</p> </li> <li> <blockquote> <p>A quote</p> </blockquote> </li> <li> <p>Hipster list</p> <ul> <li>brunch</li> <li>fixie</li> <li>raybans</li> <li>messenger bag</li> </ul> </li> </ul>]]></content><author><name></name></author><category term="sample-posts"/><category term="formatting"/><category term="code"/><summary type="html"><![CDATA[this is what included tabs in a post could look like]]></summary></entry><entry><title type="html">a post with typograms</title><link href="https://sherspidey.github.io/blog/2024/typograms/" rel="alternate" type="text/html" title="a post with typograms"/><published>2024-04-30T07:36:10+08:00</published><updated>2024-04-30T07:36:10+08:00</updated><id>https://sherspidey.github.io/blog/2024/typograms</id><content type="html" xml:base="https://sherspidey.github.io/blog/2024/typograms/"><![CDATA[<p>This is an example post with some <a href="https://github.com/google/typograms/">typograms</a> code.</p> <div class="language-markdown highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">```</span><span class="nl">typograms
+</span></code></pre></div></div> </li> </ul> <h2 id="tabs-for-something-else">Tabs for something else</h2> <ul id="something-else" class="tab" data-tab="419290c7-45db-480c-aa84-878e41002c7a" data-name="something-else"> <li class="active" id="something-else-text"> <a href="#">text </a> </li> <li id="something-else-quote"> <a href="#">quote </a> </li> <li id="something-else-list"> <a href="#">list </a> </li> </ul> <ul class="tab-content" id="419290c7-45db-480c-aa84-878e41002c7a" data-name="something-else"> <li class="active"> <p>Regular text</p> </li> <li> <blockquote> <p>A quote</p> </blockquote> </li> <li> <p>Hipster list</p> <ul> <li>brunch</li> <li>fixie</li> <li>raybans</li> <li>messenger bag</li> </ul> </li> </ul>]]></content><author><name></name></author><category term="sample-posts"/><category term="formatting"/><category term="code"/><summary type="html"><![CDATA[this is what included tabs in a post could look like]]></summary></entry><entry><title type="html">a post with typograms</title><link href="https://sherspidey.github.io/blog/2024/typograms/" rel="alternate" type="text/html" title="a post with typograms"/><published>2024-04-30T07:36:10+08:00</published><updated>2024-04-30T07:36:10+08:00</updated><id>https://sherspidey.github.io/blog/2024/typograms</id><content type="html" xml:base="https://sherspidey.github.io/blog/2024/typograms/"><![CDATA[<p>This is an example post with some <a href="https://github.com/google/typograms/">typograms</a> code.</p> <div class="language-markdown highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">```</span><span class="nl">typograms
 </span><span class="sb">+----+
 |    |---&gt; My first diagram!
 +----+</span>
@@ -708,78 +749,4 @@ index 3bb754ac..a34839c0 100644
     }
   }
 }
-</code></pre> <p>This plot supports both light and dark themes.</p>]]></content><author><name></name></author><category term="sample-posts"/><category term="formatting"/><category term="charts"/><summary type="html"><![CDATA[this is what included vega lite code could look like]]></summary></entry><entry><title type="html">a post with geojson</title><link href="https://sherspidey.github.io/blog/2024/geojson-map/" rel="alternate" type="text/html" title="a post with geojson"/><published>2024-01-27T01:57:00+08:00</published><updated>2024-01-27T01:57:00+08:00</updated><id>https://sherspidey.github.io/blog/2024/geojson-map</id><content type="html" xml:base="https://sherspidey.github.io/blog/2024/geojson-map/"><![CDATA[<p>This is an example post with some <a href="https://geojson.org/">geojson</a> code. The support is provided thanks to <a href="https://leafletjs.com/">Leaflet</a>. To create your own visualization, go to <a href="https://geojson.io/">geojson.io</a>.</p> <div class="language-markdown highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">```</span><span class="nl">geojson
-</span><span class="sb">{
-  "type": "FeatureCollection",
-  "features": [
-    {
-      "type": "Feature",
-      "properties": {},
-      "geometry": {
-        "coordinates": [
-          [
-            [
-              -60.11363029935569,
-              -2.904625022183211
-            ],
-            [
-              -60.11363029935569,
-              -3.162613728707967
-            ],
-            [
-              -59.820894493858034,
-              -3.162613728707967
-            ],
-            [
-              -59.820894493858034,
-              -2.904625022183211
-            ],
-            [
-              -60.11363029935569,
-              -2.904625022183211
-            ]
-          ]
-        ],
-        "type": "Polygon"
-      }
-    }
-  ]
-}</span>
-<span class="p">```</span>
-</code></pre></div></div> <p>Which generates:</p> <pre><code class="language-geojson">{
-  "type": "FeatureCollection",
-  "features": [
-    {
-      "type": "Feature",
-      "properties": {},
-      "geometry": {
-        "coordinates": [
-          [
-            [
-              -60.11363029935569,
-              -2.904625022183211
-            ],
-            [
-              -60.11363029935569,
-              -3.162613728707967
-            ],
-            [
-              -59.820894493858034,
-              -3.162613728707967
-            ],
-            [
-              -59.820894493858034,
-              -2.904625022183211
-            ],
-            [
-              -60.11363029935569,
-              -2.904625022183211
-            ]
-          ]
-        ],
-        "type": "Polygon"
-      }
-    }
-  ]
-}
-</code></pre>]]></content><author><name></name></author><category term="sample-posts"/><category term="formatting"/><category term="charts"/><category term="maps"/><summary type="html"><![CDATA[this is what included geojson code could look like]]></summary></entry></feed>
+</code></pre> <p>This plot supports both light and dark themes.</p>]]></content><author><name></name></author><category term="sample-posts"/><category term="formatting"/><category term="charts"/><summary type="html"><![CDATA[this is what included vega lite code could look like]]></summary></entry></feed>
