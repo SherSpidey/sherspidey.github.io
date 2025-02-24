@@ -79,7 +79,18 @@ ninja.data = [{
               handler: () => {
                 window.location.href = "/blog/";
               },
-            },{id: "post-那些巧妙的设计模式",
+            },{id: "post-vulkan阶段学习笔记",
+      
+        title: "Vulkan阶段学习笔记",
+      
+      description: "个人学习过程中的一些笔记",
+      section: "Posts",
+      handler: () => {
+        
+          window.location.href = "/blog/2025/Vulkan%E9%98%B6%E6%AE%B5%E7%AC%94%E8%AE%B0/";
+        
+      },
+    },{id: "post-那些巧妙的设计模式",
       
         title: "那些巧妙的设计模式",
       
