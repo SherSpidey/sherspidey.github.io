@@ -79,7 +79,18 @@ ninja.data = [{
               handler: () => {
                 window.location.href = "/blog/";
               },
-            },{id: "post-vulkan阶段学习笔记",
+            },{id: "post-qt学习积累",
+      
+        title: "Qt学习积累",
+      
+      description: "个人Qt学习过程中的一些笔记",
+      section: "Posts",
+      handler: () => {
+        
+          window.location.href = "/blog/2025/Qt%E5%AD%A6%E4%B9%A0%E8%BF%87%E7%A8%8B%E7%9A%84%E4%B8%80%E4%BA%9B%E7%A7%AF%E7%B4%AF/";
+        
+      },
+    },{id: "post-vulkan阶段学习笔记",
       
         title: "Vulkan阶段学习笔记",
       
