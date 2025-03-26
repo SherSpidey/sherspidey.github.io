@@ -79,7 +79,29 @@ ninja.data = [{
               handler: () => {
                 window.location.href = "/blog/";
               },
-            },{id: "post-qt学习积累",
+            },{id: "post-暂定粗略学习计划",
+      
+        title: "暂定粗略学习计划",
+      
+      description: "个人学习计划",
+      section: "Posts",
+      handler: () => {
+        
+          window.location.href = "/blog/2025/%E7%B2%97%E7%95%A5%E8%AE%A1%E5%88%92/";
+        
+      },
+    },{id: "post-vsg学习笔记",
+      
+        title: "VSG学习笔记",
+      
+      description: "个人学习VSG过程中的一些笔记，思维导图为主",
+      section: "Posts",
+      handler: () => {
+        
+          window.location.href = "/blog/2025/VSG%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/";
+        
+      },
+    },{id: "post-qt学习积累",
       
         title: "Qt学习积累",
       
