@@ -1,6 +1,6 @@
 # Paradox's blog
 
-This is where I put all my post while learning.
+This is where I put all my posts while learning.
 
 
 ## License
