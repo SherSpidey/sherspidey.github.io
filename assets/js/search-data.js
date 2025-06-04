@@ -79,7 +79,18 @@ ninja.data = [{
               handler: () => {
                 window.location.href = "/blog/";
               },
-            },{id: "post-暂定粗略学习计划",
+            },{id: "post-vsg学习计划",
+      
+        title: "VSG学习计划",
+      
+      description: "",
+      section: "Posts",
+      handler: () => {
+        
+          window.location.href = "/blog/2025/VSG%E5%AD%A6%E4%B9%A0%E8%AE%A1%E5%88%92/";
+        
+      },
+    },{id: "post-暂定粗略学习计划",
       
         title: "暂定粗略学习计划",
       
