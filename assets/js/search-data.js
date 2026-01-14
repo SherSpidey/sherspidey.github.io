@@ -16,7 +16,18 @@ ninja.data = [{
           handler: () => {
             window.location.href = "/blog/";
           },
-        },{id: "post-vulkan阶段学习笔记",
+        },{id: "post-年度计划",
+        
+          title: "年度计划",
+        
+        description: "2026年学习与项目开发计划",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2026/%E5%B9%B4%E5%BA%A6%E8%AE%A1%E5%88%92(2026)/";
+          
+        },
+      },{id: "post-vulkan阶段学习笔记",
         
           title: "Vulkan阶段学习笔记",
         
