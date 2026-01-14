@@ -1,0 +1,4 @@
+User-agent: *
+Disallow:
+
+Sitemap: https://sherspidey.github.io/sitemap.xml

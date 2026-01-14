@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="cn"><generator uri="https://jekyllrb.com/" version="4.4.1">Jekyll</generator><link href="https://sherspidey.github.io/feed.xml" rel="self" type="application/atom+xml"/><link href="https://sherspidey.github.io/" rel="alternate" type="text/html" hreflang="cn"/><updated>2026-01-14T09:37:07+08:00</updated><id>https://sherspidey.github.io/feed.xml</id><title type="html">Paradox’s blog</title><subtitle>A simple, whitespace theme for academics. Based on [*folio](https://github.com/bogoli/-folio) design. </subtitle><entry><title type="html">Vulkan阶段学习笔记</title><link href="https://sherspidey.github.io/blog/2026/Vulkan%E9%98%B6%E6%AE%B5%E7%AC%94%E8%AE%B0/" rel="alternate" type="text/html" title="Vulkan阶段学习笔记"/><published>2026-01-13T11:00:00+08:00</published><updated>2026-01-13T11:00:00+08:00</updated><id>https://sherspidey.github.io/blog/2026/Vulkan%E9%98%B6%E6%AE%B5%E7%AC%94%E8%AE%B0</id><content type="html" xml:base="https://sherspidey.github.io/blog/2026/Vulkan%E9%98%B6%E6%AE%B5%E7%AC%94%E8%AE%B0/"><![CDATA[<h2 id="glsl-opengl-vs-vulkan">GLSL: OpenGL VS Vulkan</h2> <p>学习Vulkan的过程，必少不了同样是GLSL，但是一些特征不一样的情况，于是总结如下：</p> <h3 id="opengl">OpenGL</h3> <pre><code class="language-GLSL">// 单层次的uniform系统
+uniform mat4 projection;
+uniform mat4 modelView;
+uniform sampler2D diffuseMap;
+</code></pre> <h3 id="vulkan">Vulkan</h3> <pre><code class="language-GLSL">// 两级资源绑定系统：set + binding
+layout(set = 0, binding = 0) uniform CameraUBO {...}
+layout(set = 1, binding = 0) uniform MaterialUBO {...}
+layout(set = 1, binding = 1) uniform sampler2D diffuseMap;
+</code></pre> <h3 id="ubo">UBO</h3> <pre><code class="language-GLSL">// Vulkan
+layout(set = 0, binding = 0) uniform UBO {  // 显式指定资源位置
+    mat4 model;
+};
+
+// OpenGL
+layout(std140) uniform UBO {  // 只需指定内存布局
+    mat4 model;
+};
+</code></pre> <p>这是因为Vulkan的设计理念是”显式优于隐式”，要求开发者明确指定所有资源的位置和绑定关系</p> <h3 id="性能比较">性能比较</h3> <p><code class="language-plaintext highlighter-rouge">Vulkan push constant &gt; Vulkan/OpenGL UBO &gt; OpenGL 独立uniform变量</code></p> <p><code class="language-plaintext highlighter-rouge">Vulkan push constant</code> 性能最好，因为：</p> <ul> <li>直接通过命令缓冲区传递数据</li> <li>不需要内存分配</li> <li>不需要描述符集</li> <li>数据直接存储在命令缓冲区中</li> </ul> <p>所以，在VSG中，需要频繁更新的P和MV矩阵就被放在<code class="language-plaintext highlighter-rouge">push constant</code>中，但是同时也需要注意其小容量（通常128-256字节）的特点</p>]]></content><author><name></name></author><category term="Vulkan"/><category term="Shader"/><summary type="html"><![CDATA[个人学习过程中的一些笔记]]></summary></entry><entry><title type="html">VSG学习笔记</title><link href="https://sherspidey.github.io/blog/2026/VSG%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" rel="alternate" type="text/html" title="VSG学习笔记"/><published>2026-01-13T10:55:00+08:00</published><updated>2026-01-13T10:55:00+08:00</updated><id>https://sherspidey.github.io/blog/2026/VSG%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0</id><content type="html" xml:base="https://sherspidey.github.io/blog/2026/VSG%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"><![CDATA[<h2 id="vsg-qt">VSG-QT</h2> <h3 id="vsgqtwindow">vsgQt::Window</h3> <pre><code class="language-mermaid">mindmap
+    root(vsgQt::Window)
+        c[vsg::Window]
+        c[vsg::Viewer]
+            Timer: Render
+            Event: Poll from windows
+            Request: Permission for rendering
+        
+</code></pre>]]></content><author><name></name></author><category term="VSG"/><category term="Vulkan"/><summary type="html"><![CDATA[个人学习VSG过程中的一些笔记，思维导图为主]]></summary></entry><entry><title type="html">CRTP初探</title><link href="https://sherspidey.github.io/blog/2026/CRTP%E5%88%9D%E6%8E%A2/" rel="alternate" type="text/html" title="CRTP初探"/><published>2026-01-13T10:50:00+08:00</published><updated>2026-01-13T10:50:00+08:00</updated><id>https://sherspidey.github.io/blog/2026/CRTP%E5%88%9D%E6%8E%A2</id><content type="html" xml:base="https://sherspidey.github.io/blog/2026/CRTP%E5%88%9D%E6%8E%A2/"><![CDATA[<h2 id="crtp">CRTP</h2> <p>CRTP，全称“Curiously Recurring Template Pattern”（怪异递归模板模式）， 是一种在C++编程中使用模板的设计模式。这种模式看起来有点不寻常，但非常强大和实用。 它的核心思想是：一个类将自己作为模板参数传递给基类。</p> <p>第一次看到这个模式的时候，确实感觉很怪异，毕竟直觉上直接继承可以做到功能，为什么要反其道而行之， 使用模板，破坏代码的可读性呢？但深入了解后才发现他的好处。</p> <p>首先我们来看一下正常继承关系的一个简单示例：</p> <div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// Base.h</span>
+<span class="k">class</span> <span class="nc">Base</span> <span class="p">{</span>
+<span class="nl">public:</span>
+    <span class="k">virtual</span> <span class="kt">void</span> <span class="n">foo</span><span class="p">()</span> <span class="p">{</span>
+        <span class="c1">// 基类实现</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="c1">// Derived.h</span>
+<span class="k">class</span> <span class="nc">Derived</span> <span class="o">:</span> <span class="k">public</span> <span class="n">Base</span> <span class="p">{</span>
+<span class="nl">public:</span>
+    <span class="kt">void</span> <span class="n">foo</span><span class="p">()</span> <span class="k">override</span> <span class="p">{</span>
+        <span class="c1">// 子类实现</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+</code></pre></div></div> <p>可以看到，正常情况下，编译器会为每一个带有虚函数的类生成对应的虚函数表，以满足运行时的多态性。</p> <p>然后我们来看一下CRTP是如何做到的：</p> <div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">Derived</span><span class="p">&gt;</span>
+<span class="k">class</span> <span class="nc">Base</span> <span class="p">{</span>
+<span class="nl">public:</span>
+    <span class="kt">void</span> <span class="n">interface</span><span class="p">()</span> <span class="p">{</span>
+        <span class="c1">// 调用派生类实现的方法</span>
+        <span class="k">static_cast</span><span class="o">&lt;</span><span class="n">Derived</span><span class="o">*&gt;</span><span class="p">(</span><span class="k">this</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">implementation</span><span class="p">();</span>
+    <span class="p">}</span>
+
+    <span class="c1">// 派生类必须实现这个方法</span>
+    <span class="kt">void</span> <span class="nf">implementation</span><span class="p">()</span> <span class="p">{</span>
+        <span class="c1">// 默认实现（如果需要的话）</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="k">class</span> <span class="nc">Derived</span> <span class="o">:</span> <span class="k">public</span> <span class="n">Base</span><span class="o">&lt;</span><span class="n">Derived</span><span class="o">&gt;</span> <span class="p">{</span>
+<span class="nl">public:</span>
+    <span class="kt">void</span> <span class="n">implementation</span><span class="p">()</span> <span class="p">{</span>
+        <span class="c1">// Derived类自己的实现</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"Derived implementation"</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">Derived</span> <span class="n">d</span><span class="p">;</span>
+    <span class="n">d</span><span class="p">.</span><span class="n">interface</span><span class="p">();</span> <span class="c1">// 输出: Derived implementation</span>
+<span class="p">}</span>
+</code></pre></div></div> <p>这时，CRTP的优点就体验出来，使用模板之后，其提供了一种无需运行时开销的多态性， 因为类型在编译时就已经确定，所以也并不会使用虚函数表，可以减少内存和时间的开销。 除此之外，由于CRTP实现了编译时多态性，编译器可以在编译时进行更多的优化， 如内联展开（inline expansion），这可以显著提高运行时性能。</p> <p>不过，由于模板的特性，导致单纯的CRTP，无法使用基类指针储存，这在程序设计中算是一个硬伤， 具体可以通过以下情况缓解：</p> <pre><code class="language-C++">class IBase {
+public:
+    virtual ~IBase() = default;
+    virtual void interface() = 0;
+};
+
+template &lt;typename Derived&gt;
+class Base : public IBase {
+public:
+    void interface() override {
+        static_cast&lt;Derived*&gt;(this)-&gt;implementation();
+    }
+};
+</code></pre> <p>但是同样的，由于引入了虚函数，导致CRTP的性能优势会丢失一部分，不过最差情况下，也与直接使用虚函数相当。</p> <p>同时，如果不考虑性能的需求，CRTP还有一个好处，因为它传入了子类的类型，使得基类阶段就已经明确子类类型， 从而实现很多正常编程无法做的特性，比如VSG(VulkanSceneGraph)中，就使用Inherit基类，它的主要代码是这样的：</p> <pre><code class="language-C++">template&lt;class ParentClass, class Subclass&gt;
+class Inherit : public ParentClass
+{
+public:
+    template&lt;typename... Args&gt;
+    Inherit(Args&amp;&amp;... args) :
+        ParentClass(std::forward&lt;Args&gt;(args)...) {}
+
+    template&lt;typename... Args&gt;
+    static ref_ptr&lt;Subclass&gt; create(Args&amp;&amp;... args)
+    {
+        return ref_ptr&lt;Subclass&gt;(new Subclass(std::forward&lt;Args&gt;(args)...));
+    }
+
+    template&lt;typename... Args&gt;
+    static ref_ptr&lt;Subclass&gt; create_if(bool flag, Args&amp;&amp;... args)
+    {
+        if (flag) return ref_ptr&lt;Subclass&gt;(new Subclass(std::forward&lt;Args&gt;(args)...));
+        return {};
+    }
+
+    std::size_t sizeofObject() const noexcept override { return sizeof(Subclass); }
+    const char* className() const noexcept override { return type_name&lt;Subclass&gt;(); }
+    const std::type_info&amp; type_info() const noexcept override { return typeid(Subclass); }
+    bool is_compatible(const std::type_info&amp; type) const noexcept override { return typeid(Subclass) == type || ParentClass::is_compatible(type); }
+
+    int compare(const Object&amp; rhs) const override
+    {
+        int result = ParentClass::compare(rhs);
+        if (result != 0) return result;
+
+        size_t startOfSubclass = sizeof(ParentClass);
+        size_t size = sizeof(Subclass) - startOfSubclass;
+
+        // Subclass adds no extra data to compare
+        if (size == 0) return 0;
+
+        const char* lhs_ptr = reinterpret_cast&lt;const char*&gt;(this);
+        const char* rhs_ptr = reinterpret_cast&lt;const char*&gt;(&amp;rhs);
+
+        // compare the data that Subclass adds over ParentClass
+        return std::memcmp(lhs_ptr + startOfSubclass, rhs_ptr + startOfSubclass, size);
+    }
+
+    void accept(Visitor&amp; visitor) override { visitor.apply(static_cast&lt;Subclass&amp;&gt;(*this)); }
+    void accept(ConstVisitor&amp; visitor) const override { visitor.apply(static_cast&lt;const Subclass&amp;&gt;(*this)); }
+    void accept(RecordTraversal&amp; visitor) const override { visitor.apply(static_cast&lt;const Subclass&amp;&gt;(*this)); }
+};
+</code></pre> <p>由于使用了CRTP，子类很多需要反复重载的函数，如<code class="language-plaintext highlighter-rouge">sizeofObject</code>这种函数在子类中就可以完全不写，大大减少样板代码。</p>]]></content><author><name></name></author><category term="Design Pattern"/><category term="Template"/><summary type="html"><![CDATA[CRTP设计模式初探]]></summary></entry><entry><title type="html">个人Ubuntu初始化配置</title><link href="https://sherspidey.github.io/blog/2026/%E4%B8%AA%E4%BA%BAUbuntu%E5%88%9D%E5%A7%8B%E5%8C%96%E9%85%8D%E7%BD%AE/" rel="alternate" type="text/html" title="个人Ubuntu初始化配置"/><published>2026-01-13T10:00:00+08:00</published><updated>2026-01-13T10:00:00+08:00</updated><id>https://sherspidey.github.io/blog/2026/%E4%B8%AA%E4%BA%BAUbuntu%E5%88%9D%E5%A7%8B%E5%8C%96%E9%85%8D%E7%BD%AE</id><content type="html" xml:base="https://sherspidey.github.io/blog/2026/%E4%B8%AA%E4%BA%BAUbuntu%E5%88%9D%E5%A7%8B%E5%8C%96%E9%85%8D%E7%BD%AE/"><![CDATA[<h2 id="替换国内源">替换国内源</h2> <p>Ubuntu24的源规则已经变动，以下换源规则仅供Ubuntu22参考</p> <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo sed</span> <span class="nt">-i</span> <span class="s2">"s@http://.*archive.ubuntu.com@http://repo.huaweicloud.com@g"</span> /etc/apt/sources.list
+<span class="nb">sudo sed</span> <span class="nt">-i</span> <span class="s2">"s@http://.*security.ubuntu.com@http://repo.huaweicloud.com@g"</span> /etc/apt/sources.list
+</code></pre></div></div> <h2 id="美化终端">美化终端</h2> <p>Ubuntu终端默认使用的命令行解释器(Shell)为bash，虽然稳定、简洁，但日常使用体验对于新手来说并不是很好，故使用zsh。<br/> zsh是一个功能更为先进的shell，可以极大地提升开发者的效率和用户体验，适合那些需要更强大自动补全、命令修正和自定义体验的用户。</p> <h3 id="安装oh-my-zsh">安装Oh-My-Zsh</h3> <p><a href="https://ohmyz.sh/"><strong>Oh-My-Zsh</strong></a>是一款非常好用的Zsh管理框架，并提供多种终端美化主题。</p> <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>apt update
+<span class="nb">sudo </span>apt <span class="nb">install </span>zsh <span class="nt">-y</span>
+sh <span class="nt">-c</span> <span class="s2">"</span><span class="si">$(</span>curl <span class="nt">-fsSL</span> https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh<span class="si">)</span><span class="s2">"</span>
+</code></pre></div></div> <h3 id="安装oh-my-zsh插件">安装Oh-My-Zsh插件</h3> <p>插件是提高Oh-My-Zsh效率的真正原因，目前主要使用的插件主要是<code class="language-plaintext highlighter-rouge">zsh-syntax-highlighting</code>与<code class="language-plaintext highlighter-rouge">zsh-autosuggestions</code>。</p> <h4 id="zsh高亮">Zsh高亮</h4> <p>安装高亮插件，实现命令的高亮</p> <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git clone https://github.com/zsh-users/zsh-syntax-highlighting.git <span class="k">${</span><span class="nv">ZSH_CUSTOM</span><span class="k">:-</span><span class="p">~/.oh-my-zsh/custom</span><span class="k">}</span>/plugins/zsh-syntax-highlighting
+</code></pre></div></div> <h4 id="zsh自动补全">Zsh自动补全</h4> <p>安装自动补全插件，实现历史命令的自动补全</p> <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git clone https://github.com/zsh-users/zsh-autosuggestions <span class="k">${</span><span class="nv">ZSH_CUSTOM</span><span class="k">:-</span><span class="p">~/.oh-my-zsh/custom</span><span class="k">}</span>/plugins/zsh-autosuggestions
+</code></pre></div></div> <h3 id="配置oh-my-zsh">配置Oh-My-Zsh</h3> <p>编辑<code class="language-plaintext highlighter-rouge">~/.zshrc</code>配置文件，找到并修改</p> <h4 id="修改主题">修改主题</h4> <div class="language-zsh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes</span>
+<span class="nv">ZSH_THEME</span><span class="o">=</span><span class="s2">"agnoster"</span>
+</code></pre></div></div> <h4 id="启动插件">启动插件</h4> <div class="language-zsh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">plugins</span><span class="o">=(</span>git zsh-syntax-highlighting zsh-autosuggestions<span class="o">)</span>
+</code></pre></div></div> <h4 id="隐藏用户名与主机名">隐藏用户名与主机名</h4> <div class="language-zsh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># User configuration</span>
+prompt_context<span class="o">(){}</span>
+</code></pre></div></div> <h2 id="配置jekyll">配置Jekyll</h2> <h3 id="安装ruby">安装Ruby</h3> <h4 id="安装rvm">安装RVM</h4> <p>导入<strong>GPG</strong>密钥</p> <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>gpg2 <span class="nt">--keyserver</span> hkp://keyserver.ubuntu.com <span class="nt">--recv-keys</span> 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB
+</code></pre></div></div> <p>遇到网络问题可能会失败，切换为以下命令</p> <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">command </span>curl <span class="nt">-sSL</span> https://rvm.io/mpapis.asc | gpg2 <span class="nt">--import</span> -
+<span class="nb">command </span>curl <span class="nt">-sSL</span> https://rvm.io/pkuczynski.asc | gpg2 <span class="nt">--import</span> -
+</code></pre></div></div> <p>安装RVM</p> <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>curl <span class="nt">-sSL</span> https://get.rvm.io | bash <span class="nt">-s</span> stable 
+</code></pre></div></div> <h4 id="安装ruby-1">安装Ruby</h4> <p>选择你想要安装的<a href="https://www.ruby-lang.org/en/downloads/">Ruby</a>版本，这里以3.3.6为例</p> <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>rvm <span class="nb">install </span>ruby-3.3.6
+</code></pre></div></div> <p>安装完成后，如果遇到命令运行出错的情况，请重新安装</p> <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>rvm reinstall ruby-3.3.6
+</code></pre></div></div> <p><strong>注意</strong>：如果遇到命令找不到的情况，重启终端或者：</p> <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">source</span> .zshrc 
+</code></pre></div></div> <h3 id="安装jekyll">安装Jekyll</h3> <p>安装Jekyll非常简单</p> <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>gem <span class="nb">install </span>jekyll bundler
+</code></pre></div></div> <h3 id="其他安装">其他安装</h3> <h4 id="安装jupyter-notebook">安装Jupyter-NoteBook</h4> <p>确保python3以及pip3已经安装，否则执行</p> <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>apt update <span class="o">&amp;&amp;</span> <span class="nb">sudo </span>apt <span class="nb">install </span>python3 python3-pip
+</code></pre></div></div> <p>pip安装Jupyter-NoteBook</p> <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pip <span class="nb">install </span>jupyter
+</code></pre></div></div> <p>编辑<code class="language-plaintext highlighter-rouge">~/.zshrc</code>文件，配置添加安装好的包到Path</p> <div class="language-zsh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 具体路径视环境而定</span>
+<span class="nb">export </span><span class="nv">PATH</span><span class="o">=</span><span class="s2">"</span><span class="nv">$PATH</span><span class="s2">:</span><span class="nv">$HOME</span><span class="s2">/.local/bin"</span>
+</code></pre></div></div> <h4 id="安装nvm与nodejs">安装nvm与NodeJs</h4> <p>安装nvm</p> <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>curl <span class="nt">-o-</span> https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
+</code></pre></div></div> <p>安装NodeJs</p> <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nvm <span class="nb">install</span> <span class="nt">--lts</span>
+</code></pre></div></div> <h2 id="终端环境配置">终端环境配置</h2> <h3 id="java-环境配置">Java 环境配置</h3> <div class="language-zsh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Java 环境切换</span>
+setJavaHome<span class="o">()</span> <span class="o">{</span>
+    <span class="k">case</span> <span class="nv">$1</span> <span class="k">in
+    </span>8<span class="p">)</span>
+        <span class="nb">export </span><span class="nv">JAVA_HOME</span><span class="o">=</span>~/Code/Env/Java/jdk1.8.0_401
+        <span class="p">;;</span>
+    11<span class="p">)</span>
+        <span class="nb">export </span><span class="nv">JAVA_HOME</span><span class="o">=</span>~/Code/Env/Java/jdk-11.0.21
+        <span class="p">;;</span>
+    17<span class="p">)</span>
+        <span class="nb">export </span><span class="nv">JAVA_HOME</span><span class="o">=</span>~/Code/Env/Java/jdk-17.0.9
+        <span class="p">;;</span>
+    21<span class="p">)</span>
+        <span class="nb">export </span><span class="nv">JAVA_HOME</span><span class="o">=</span>~/Code/Env/Java/jdk-21.0.1
+        <span class="p">;;</span>
+    <span class="k">*</span><span class="p">)</span>
+        <span class="nb">echo</span> <span class="s2">"Unsupported Java version: </span><span class="nv">$1</span><span class="s2">"</span>
+        <span class="k">return </span>1
+    <span class="k">esac
+
+    </span><span class="nb">export </span><span class="nv">JRE_HOME</span><span class="o">=</span><span class="nv">$JAVA_HOME</span>/jre
+    <span class="nb">export </span><span class="nv">CLASSPATH</span><span class="o">=</span><span class="nv">$JAVA_HOME</span>/lib:<span class="nv">$JRE_HOME</span>/lib:.
+    <span class="nb">export </span><span class="nv">PATH</span><span class="o">=</span><span class="nv">$JAVA_HOME</span>/bin:<span class="nv">$JRE_HOME</span>/bin:<span class="nv">$PATH</span>
+    <span class="nb">echo</span> <span class="s2">"JAVA_HOME set to </span><span class="nv">$JAVA_HOME</span><span class="s2">"</span>
+<span class="o">}</span>
+
+<span class="c">### 默认设置</span>
+setJavaHome 8 <span class="o">&gt;</span> /dev/null
+</code></pre></div></div>]]></content><author><name></name></author><category term="Ubuntu"/><category term="Oh-My-Zsh"/><category term="Jekyll"/><category term="Ruby"/><category term="Java"/><category term="JavaScript"/><summary type="html"><![CDATA[Ubuntu初始配置，美化终端]]></summary></entry></feed>
