@@ -23,11 +23,7 @@
   color: #999999;
   font-weight: bold;
   font-style: italic;
-} /* Comment.Preproc */
-.highlight .c1 {
-  color: #999988;
-  font-style: italic;
-} /* Comment.Single */ /* Comment.Special */ /* Generic.Deleted */
+} /* Comment.Preproc */ /* Comment.Single */ /* Comment.Special */ /* Generic.Deleted */
 .highlight .ge {
   color: #000000;
   font-style: italic;
@@ -41,11 +37,7 @@
 } /* Generic.Output */ /* Generic.Prompt */ /* Generic.Strong */ /* Generic.Subheading */
 .highlight .gt {
   color: #aa0000;
-} /* Generic.Traceback */ /* Keyword.Constant */ /* Keyword.Declaration */ /* Keyword.Namespace */ /* Keyword.Pseudo */ /* Keyword.Reserved */
-.highlight .kt {
-  color: #445588;
-  font-weight: bold;
-} /* Keyword.Type */
+} /* Generic.Traceback */ /* Keyword.Constant */ /* Keyword.Declaration */ /* Keyword.Namespace */ /* Keyword.Pseudo */ /* Keyword.Reserved */ /* Keyword.Type */
 .highlight .m {
   color: #009999;
 } /* Literal.Number */
@@ -75,11 +67,7 @@
 .highlight .ne {
   color: #990000;
   font-weight: bold;
-} /* Name.Exception */
-.highlight .nf {
-  color: #990000;
-  font-weight: bold;
-} /* Name.Function */
+} /* Name.Exception */ /* Name.Function */
 .highlight .nl {
   color: #990000;
   font-weight: bold;
