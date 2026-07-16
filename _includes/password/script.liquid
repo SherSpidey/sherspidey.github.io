@@ -1,0 +1,60 @@
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  var PAGE_PASSWORD = {{ password | jsonify }};
+  var SESSION_KEY = "pagePasswordVerified";
+
+  var promptEl  = document.getElementById("passwordPrompt");
+  var errorEl   = document.getElementById("passwordError");
+  var mainEl    = document.getElementById("mainContent");
+  var inputEl   = document.getElementById("pwd");
+  var submitBtn = document.getElementById("ppSubmit");
+
+  function show(el)   { el.setAttribute("data-visible", "true"); }
+  function hide(el)   { el.setAttribute("data-visible", "false"); }
+  function reveal(el) { el.removeAttribute("data-hidden"); }
+
+  function isVerified() {
+    try { return sessionStorage.getItem(SESSION_KEY) === PAGE_PASSWORD; }
+    catch (e) { return false; }
+  }
+
+  function setVerified() {
+    try { sessionStorage.setItem(SESSION_KEY, PAGE_PASSWORD); } catch (e) {}
+  }
+
+  function initPassword() {
+    if (!PAGE_PASSWORD) { reveal(mainEl); return; }
+    if (isVerified())   { reveal(mainEl); return; }
+    show(promptEl);
+    if (inputEl) inputEl.focus();
+  }
+
+  function checkPassword() {
+    var input = inputEl ? inputEl.value : "";
+    if (input === PAGE_PASSWORD) {
+      setVerified();
+      hide(promptEl);
+      reveal(mainEl);
+      if (inputEl) inputEl.value = "";
+    } else {
+      show(errorEl);
+      if (inputEl) { inputEl.value = ""; inputEl.focus(); }
+      errorEl.style.animation = "none";
+      void errorEl.offsetWidth;
+      errorEl.style.animation = "";
+    }
+  }
+
+  initPassword();
+  if (submitBtn) submitBtn.addEventListener("click", checkPassword);
+  if (inputEl) {
+    inputEl.addEventListener("keypress", function (e) {
+      if (e.key === "Enter") { e.preventDefault(); checkPassword(); }
+    });
+  }
+})();
+</script>
